@@ -1,0 +1,352 @@
+import React, {useState, useEffect} from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
+import IconFeather from 'react-native-vector-icons/Feather';
+import {COLORS, images} from '../../../constants';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  saveDescription,
+  ResetAddDescriptionForm,
+  resetFetchDescription,
+} from '../../../redux/Property/property.actions';
+import { launchImageLibrary } from 'react-native-image-picker';
+
+const mapState = ({property}) => ({
+  addDescriptionSuccess: property.addDescriptionSuccess,
+  errors: property.errors,
+});
+
+const AddDescription = ({navigation}) => {
+  console.log('AddDescription screen !');
+  const {addDescriptionSuccess, errors} = useSelector(mapState);
+  console.log('addDescriptionSuccess =>', addDescriptionSuccess, 'errors =>', errors);
+
+  const dispatch = useDispatch();
+
+  // Storing data
+  const [photo, onChangePhoto] = useState('');
+  const [title, onChangeTitle] = useState('');
+  const [desc, onChangeDesc] = useState('');
+  const [photoErrors, onChangePhotoError] = useState('');
+  const [titleErrors, onChangeTitleError] = useState('');
+  const [descErrors, onChangeDescError] = useState('');
+  const [imgExist, setImgExist] = useState(false);
+
+  // Optional
+  const [fileUri, setFileUri] = useState('');
+
+  useEffect(() => {
+    console.log('UseEffect');
+    console.log('File URI =>', fileUri);
+    if (fileUri) {
+      console.log('is Img Exist => ', imgExist);
+      setImgExist(true);
+      console.log('is Img Exist => ', imgExist);
+    }
+    if (addDescriptionSuccess) {
+      dispatch(ResetAddDescriptionForm());
+      navigation.navigate('PropertyHome');
+      dispatch(resetFetchDescription());
+    }
+  }, [fileUri,addDescriptionSuccess]);
+
+  const selectImage = () => {
+    var options = {
+      title: 'Select Image',
+      customButtons: [
+        {
+          name: 'customOptionKey',
+          title: 'Choose file from Custom Option',
+        },
+      ],
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    launchImageLibrary(options, res => {
+      console.log('Response = ', res);
+      if (res.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (res.error) {
+        console.log('ImagePicker Error: ', res.error);
+      } else if (res.customButton) {
+        console.log('User tapped custom button: ', res.customButton);
+        alert(res.customButton);
+      } else {
+        console.log('response', JSON.stringify(res.assets[0].uri));
+        setFileUri(res.assets[0].uri);
+        onChangePhoto(res.assets[0].uri);
+      }
+    });
+  };
+
+  const handleRegister = () => {
+    console.log('handleRegister Clicked !!');
+    let checked = 'true';
+    if (!photo) {
+      checked = 'false';
+      onChangePhotoError('* Photo Required!');
+    }
+    if (title.length == 0) {
+      checked = 'false';
+      onChangeTitleError('* Title Required!');
+    }
+    if (desc.length == 0) {
+      checked = 'false';
+      onChangeDescError('* Description Required!');
+    }
+    if (checked == 'true') {
+      console.log('Inputs Valid !!!!');
+      console.log({photo, title, desc});
+      dispatch(saveDescription(photo, title, desc));
+      console.log('data send to users actions Success !!');
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.header}>
+          <IconFeather
+            name="arrow-left"
+            size={25}
+            color={COLORS.greyColor}
+            style={styles.icon_style}
+            onPress={() => navigation.goBack()}
+          />
+        </View>
+        <View style={styles.headerTitle}>
+          <Text style={styles.headerText1}>Add MSDS</Text>
+        </View>
+        <View>
+          <TouchableOpacity onPress={selectImage} style={styles.circle}>
+            <View style={styles.circlePhoto}>
+              {imgExist ? (
+                <Image style={styles.emptyPhoto} source={{uri: fileUri}} />
+              ) : (
+                <Image style={styles.emptyPhoto} source={images.nullimg} />
+              )}
+            </View>
+            <Text style={styles.textType2}>Select A Photo</Text>
+            <Text style={styles.fieldErrors}>{photoErrors}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.content}>
+          {/* Email Adresse */}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Title</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeTitle}
+              value={title}
+              placeholder="Description Title"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+            />
+            <Text style={styles.fieldErrors}>{titleErrors}</Text>
+          </View>
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Description</Text>
+            <TextInput
+              multiline={true}
+              numberOfLines={4}
+              style={[styles.input, styles.descriptionStyle]}
+              onChangeText={onChangeDesc}
+              value={desc}
+              placeholder="Description"
+              maxLength={500}
+              placeholderTextColor={'grey'}
+            />
+            <Text style={styles.fieldErrors}>{descErrors}</Text>
+          </View>
+          <TouchableOpacity style={styles.button1} onPress={handleRegister}>
+            <Text style={styles.signup}>Confirm</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default AddDescription;
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    color: COLORS.main,
+    backgroundColor: COLORS.whiteColor,
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  icon_style: {
+    flex: 0.45,
+    padding: 20,
+    marginTop: 30,
+  },
+  headerTitle: {
+    paddingVertical: 10,
+  },
+  textType2: {
+    color: 'black',
+    fontSize: 14,
+    marginVertical: 5,
+  },
+  headerText: {
+    color: COLORS.greyColor,
+    textAlign: 'center',
+    fontSize: 15,
+    marginBottom: 0,
+    lineHeight: 20,
+  },
+  headerText1: {
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 28,
+    textTransform: 'uppercase',
+    marginBottom: 25,
+  },
+  content: {
+    paddingHorizontal: 40,
+    marginTop: 0,
+  },
+  emptyPhoto: {
+    width: 300,
+    height: 150,
+    borderRadius: 25,
+    zIndex: 100,
+    transform: [{scale: 1.1}],
+    marginBottom: 15,
+    overflow: 'hidden',
+  },
+  circle: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circlePhoto: {
+    borderRadius: 25,
+    width: 300,
+    height: 150,
+    // backgroundColor: COLORS.blue2Color,
+    backgroundColor: 'transparent',
+    borderColor: COLORS.darkgray,
+    borderWidth: 0,
+    overflow: 'hidden',
+  },
+  inputField: {
+    paddingTop: 0,
+    padding: 5,
+    width: '100%',
+  },
+  label: {
+    textAlign: 'left',
+    fontSize: 16,
+    color: COLORS.greyColor,
+    marginBottom: 10,
+  },
+  privacy: {
+    textAlign: 'left',
+    fontSize: 12,
+    color: 'white',
+    // marginBottom: 10,
+  },
+  label1: {
+    textAlign: 'left',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    color: COLORS.greyColor,
+    marginBottom: 10,
+  },
+  label2: {
+    textAlign: 'left',
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+    color: COLORS.blueColor,
+    textDecorationStyle: 'solid',
+    textDecorationColor: COLORS.greyColor,
+    marginBottom: 10,
+  },
+  fieldErrors: {
+    marginVertical: 3,
+    color: COLORS.redColor,
+    fontSize: 12,
+  },
+  input: {
+    borderRadius: 10,
+    fontSize: 14,
+    color: COLORS.darkgray,
+    borderWidth: 1,
+    borderColor: COLORS.greyColor,
+    backgroundColor: COLORS.whiteColor,
+    paddingVertical: 10,
+    paddingLeft: 20,
+    width: '100%',
+  },
+  descriptionStyle: {
+    paddingRight: 20,
+  },
+  passwordField: {
+    position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 20,
+    fontSize: 25,
+  },
+  terms: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    marginRight: 10,
+  },
+  signup: {
+    backgroundColor: COLORS.blue2Color,
+    color: 'white',
+    fontSize: 22,
+    textAlign: 'center',
+    paddingVertical: 15,
+    borderRadius: 10,
+    // marginVertical: 20,
+  },
+  button1: {
+    marginBottom: 20,
+  },
+  errors: {
+    paddingVertical: 10,
+  },
+  error: {
+    color: 'red',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  already: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+});
