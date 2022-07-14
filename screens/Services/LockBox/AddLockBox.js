@@ -34,17 +34,28 @@ const AddLockBox = ({navigation}) => {
     errors,
   );
 
-  // Selected
-  const [greenSlected, setGreenSlected] = useState(false);
-  const [redSelected, setRedSelected] = useState(false);
-  const [yellowSelected, setYellowSelected] = useState(false);
-
   // Storing data
-  const [title, onChangeTitle] = useState('');
-  const [phone, onChangePhone] = useState('');
-  const [accessErrors, onChangeAccessError] = useState('');
-  const [titleErrors, onChangeTitleError] = useState('');
-  const [phoneErrors, onChangePhoneError] = useState('');
+  // OwnerName
+  const [ownerName, onChangeOwnerName] = useState('');
+  const [ownerNameErrors, onChangeOwnerNameError] = useState('');
+  // OwnerContactNumber
+  const [ownerContactNumber, onChangeOwnerContactNumber] = useState('');
+  const [ownerContactNumberErrors, onChangeOwnerContactNumberError] = useState('');
+  // TenantName
+  const [tenantName, onChangeTenantName] = useState('');
+  const [tenantNameErrors, onChangeTenantNameError] = useState('');
+  // TenantContactNumber
+  const [tenantContactNumber, onChangeTenantContactNumber] = useState('');
+  const [tenantContactNumberErrors, onChangeTenantContactNumberError] = useState('');
+  // LockboxCode
+  const [lockboxCode, onChangeLockboxCode] = useState('');
+  const [lockboxCodeErrors, onChangeLockboxCodeError] = useState('');
+  // Pets
+  const [pets, onChangePets] = useState('');
+  const [petsErrors, onChangePetsError] = useState('');
+  // MasterKeyCode
+  const [masterKeyCode, onChangeMasterKeyCode] = useState('');
+  const [masterKeyCodeErrors, onChangeMasterKeyCodeError] = useState('');
 
   useEffect(() => {
     console.log('UseEffect');
@@ -60,31 +71,39 @@ const AddLockBox = ({navigation}) => {
   const handleRegister = () => {
     console.log('handleRegister Clicked !!');
     let checked = 'true';
-    if (!greenSlected && !redSelected && !yellowSelected) {
+    if (ownerName.length == 0) {
       checked = 'false';
-      onChangeAccessError('* Emergency Degree Required!');
+      onChangeOwnerNameError('* Owner Name Required!');
     }
-    if (title.length == 0) {
+    if (ownerContactNumber.length == 0) {
       checked = 'false';
-      onChangeTitleError('* Title Required!');
+      onChangeOwnerContactNumberError('* Owner Contact Number Required!');
     }
-    if (phone.length == 0) {
+    if (tenantName.length == 0) {
       checked = 'false';
-      onChangePhoneError('* Phone Required!');
+      onChangeTenantNameError('* Tenant Name Required!');
+    }
+    if (tenantContactNumber.length == 0) {
+      checked = 'false';
+      onChangeTenantContactNumberError('* Tenant Contact Number Required!');
+    }
+    if (lockboxCode.length == 0) {
+      checked = 'false';
+      onChangeLockboxCodeError('* Lockbox Code Required!');
+    }
+    if (pets.length == 0) {
+      checked = 'false';
+      onChangePetsError('* Pets Required!');
+    }
+    if (masterKeyCode.length == 0) {
+      checked = 'false';
+      onChangeMasterKeyCodeError('* Master Key Code Required!');
     }
 
     if (checked == 'true') {
       console.log('Inputs Valid !!!!');
-      let emergency = '';
-      if (greenSlected) {
-        emergency = '1';
-      } else if (yellowSelected) {
-        emergency = '2';
-      } else {
-        emergency = '3';
-      }
-      console.log({emergency, title, phone});
-      dispatch(saveLockbox(emergency, title, phone));
+      console.log({ownerName, ownerContactNumber, tenantName, tenantContactNumber, lockboxCode, pets, masterKeyCode});
+      dispatch(saveLockbox(ownerName, ownerContactNumber, tenantName, tenantContactNumber, lockboxCode, pets, masterKeyCode));
       console.log('data send to users actions Success !!');
     }
   };
@@ -103,119 +122,102 @@ const AddLockBox = ({navigation}) => {
         <View style={styles.headerTitle}>
           <Text style={styles.headerText1}>Add lockBox</Text>
         </View>
-        <View style={styles.accessLights}>
-          <TouchableOpacity
-            onPress={() => {
-              setRedSelected(false);
-              setYellowSelected(false);
-              setGreenSlected(!greenSlected);
-            }}
-            style={
-              !greenSlected
-                ? [styles.ED, {borderColor: '#238823'}]
-                : [styles.ED_G, {borderColor: 'white'}]
-            }>
-            <View
-              style={
-                !greenSlected
-                  ? [styles.accessLight, {backgroundColor: '#238823'}]
-                  : [styles.accessLight, {backgroundColor: 'white'}]
-              }></View>
-            <Text
-              style={
-                !greenSlected
-                  ? [styles.EDgree, {color: '#238823'}]
-                  : [styles.EDgree, {color: 'white'}]
-              }>
-              Normal emergent
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setRedSelected(false);
-              setYellowSelected(!yellowSelected);
-              setGreenSlected(false);
-            }}
-            style={
-              !yellowSelected
-                ? [styles.ED, {borderColor: '#FFBF00'}]
-                : [styles.ED_Y, {borderColor: 'white'}]
-            }>
-            <View
-              style={
-                !yellowSelected
-                  ? [styles.accessLight, {backgroundColor: '#FFBF00'}]
-                  : [styles.accessLight, {backgroundColor: 'white'}]
-              }></View>
-            <Text
-              style={
-                !yellowSelected
-                  ? [styles.EDgree, {color: '#FFBF00'}]
-                  : [styles.EDgree, {color: 'white'}]
-              }>
-              Just emergent
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setRedSelected(!redSelected);
-              setYellowSelected(false);
-              setGreenSlected(false);
-            }}
-            style={
-              !redSelected
-                ? [styles.ED, {borderColor: '#D2222D'}]
-                : [styles.ED_R, {borderColor: 'white'}]
-            }>
-            <View
-              style={
-                !redSelected
-                  ? [styles.accessLight, {backgroundColor: '#D2222D'}]
-                  : [[styles.accessLight, {backgroundColor: 'white'}]]
-              }></View>
-            <Text
-              style={
-                !redSelected
-                  ? [styles.EDgree, {color: '#D2222D'}]
-                  : [styles.EDgree, {color: 'white'}]
-              }>
-              Super emergent
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View>
-          <Text style={[styles.fieldErrors, {textAlign: 'center'}]}>
-            {accessErrors}
-          </Text>
-        </View>
         <View style={styles.content}>
-          {/* LockBox Details*/}
+          {/* Owner Name*/}
           <View style={styles.inputField}>
-            <Text style={styles.label}>LockBox Details</Text>
+            <Text style={styles.label}>Owner Name</Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeTitle}
-              value={title}
-              placeholder="LockBox Details"
+              onChangeText={onChangeOwnerName}
+              value={ownerName}
+              placeholder="Owner Name"
               maxLength={50}
               placeholderTextColor={'grey'}
             />
-            <Text style={styles.fieldErrors}>{titleErrors}</Text>
+            <Text style={styles.fieldErrors}>{ownerNameErrors}</Text>
           </View>
-          {/* Phone Number */}
+          {/* Owner Contact Number*/}
           <View style={styles.inputField}>
-            <Text style={styles.label}>Phone Number</Text>
+            <Text style={styles.label}>Owner Contact Number</Text>
             <TextInput
               style={styles.input}
-              onChangeText={onChangePhone}
-              value={phone}
-              placeholder="Phone Number"
+              onChangeText={onChangeOwnerContactNumber}
+              value={ownerContactNumber}
+              placeholder="Owner Contact Number"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+              keyboardType={"phone-pad"}
+            />
+            <Text style={styles.fieldErrors}>{ownerContactNumberErrors}</Text>
+          </View>
+          {/* Tenant Name */}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Tenant Name</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeTenantName}
+              value={tenantName}
+              placeholder="Tenant Name"
               maxLength={50}
               placeholderTextColor={'grey'}
             />
-            <Text style={styles.fieldErrors}>{phoneErrors}</Text>
+            <Text style={styles.fieldErrors}>{tenantNameErrors}</Text>
           </View>
-
+          {/* Tenant Contact Number */}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Tenant Contact Number</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeTenantContactNumber}
+              value={tenantContactNumber}
+              placeholder="Tenant Contact Number"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+              keyboardType={"phone-pad"}
+            />
+            <Text style={styles.fieldErrors}>{tenantContactNumberErrors}</Text>
+          </View>
+          {/* Lockbox Code*/}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Lockbox Code</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeLockboxCode}
+              value={lockboxCode}
+              placeholder="Lockbox Code"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+              keyboardType={"phone-pad"}
+            />
+            <Text style={styles.fieldErrors}>{lockboxCodeErrors}</Text>
+          </View>
+          {/* Pets*/}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Pets</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangePets}
+              value={pets}
+              placeholder="Pets"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+            />
+            <Text style={styles.fieldErrors}>{petsErrors}</Text>
+          </View>
+          {/* Master Key code */}
+          <View style={styles.inputField}>
+            <Text style={styles.label}>Master Key code</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeMasterKeyCode}
+              value={masterKeyCode}
+              placeholder="Master Key code"
+              maxLength={50}
+              placeholderTextColor={'grey'}
+              keyboardType={"phone-pad"}
+            />
+            <Text style={styles.fieldErrors}>{masterKeyCodeErrors}</Text>
+          </View>
           <TouchableOpacity style={styles.button1} onPress={handleRegister}>
             <Text style={styles.signup}>Confirm</Text>
           </TouchableOpacity>

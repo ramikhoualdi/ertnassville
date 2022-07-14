@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Linking,
+  Alert,
 } from 'react-native';
 import IconFeather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -19,6 +21,7 @@ import {
   resetFetchAll,
   ResetAddAnswerForm,
 } from '../redux/User/user.actions';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 const actions = [
   {
@@ -73,7 +76,7 @@ const services = [
   },
   {
     icon: icons.i3,
-    name: 'MSTS',
+    name: 'MSDS',
     link: '_Description',
     desc: 'New content',
   },
@@ -89,48 +92,48 @@ const services = [
     link: '_Elevators',
     desc: 'Shifting methods',
   },
-  {
-    icon: icons.i6,
-    name: 'Generator',
-    link: '_Generators',
-    desc: 'The generators',
-  },
+  // {
+  //   icon: icons.i6,
+  //   name: 'Generator',
+  //   link: '_Generators',
+  //   desc: 'The generators',
+  // },
   {
     icon: icons.i7,
     name: 'Lockbox',
     link: '_LockBoxes',
     desc: 'The lockboxs',
   },
-  {
-    icon: icons.i8,
-    name: 'Matterport',
-    link: '_Matterports',
-    desc: 'The matterports',
-  },
+  // {
+  //   icon: icons.i8,
+  //   name: 'Matterport',
+  //   link: '_Matterports',
+  //   desc: 'The matterports',
+  // },
   {
     icon: icons.i9,
     name: 'Gallery',
     link: '_Photos',
     desc: 'Recent photos',
   },
-  {
-    icon: icons.i10,
-    name: 'Precaution',
-    link: '_Precautions',
-    desc: 'Safety measure',
-  },
-  {
-    icon: icons.i11,
-    name: 'PreExisting Damage',
-    link: '_PreExistingDamages',
-    desc: 'Earliest harm',
-  },
-  {
-    icon: icons.i12,
-    name: 'Utility',
-    link: '_Utilities',
-    desc: 'Our tools',
-  },
+  // {
+  //   icon: icons.i10,
+  //   name: 'Precaution',
+  //   link: '_Precautions',
+  //   desc: 'Safety measure',
+  // },
+  // {
+  //   icon: icons.i11,
+  //   name: 'PreExisting Damage',
+  //   link: '_PreExistingDamages',
+  //   desc: 'Earliest harm',
+  // },
+  // {
+  //   icon: icons.i12,
+  //   name: 'Utility',
+  //   link: '_Utilities',
+  //   desc: 'Our tools',
+  // },
 ];
 const chat = [
   {
@@ -219,6 +222,53 @@ const UserHome = ({route, navigation}) => {
                 </View>
               </TouchableOpacity>
             ))}
+            <TouchableOpacity
+                style={styles.hotspot}
+                onPress={async () => {
+                  try {
+                    if (await InAppBrowser.isAvailable()) {
+                      await InAppBrowser.open("https://www.youtube.com/watch?v=UwsrzCVZAb8", {
+                        // iOS Properties
+                        dismissButtonStyle: 'cancel',
+                        preferredBarTintColor: COLORS.blueBtn,
+                        preferredControlTintColor: 'white',
+                        readerMode: false,
+                        animated: true,
+                        modalPresentationStyle: 'fullScreen',
+                        modalTransitionStyle: 'coverVertical',
+                        modalEnabled: true,
+                        enableBarCollapsing: false,
+                        // Android Properties
+                        showTitle: true,
+                        toolbarColor: COLORS.blueBtn,
+                        secondaryToolbarColor: 'black',
+                        navigationBarColor: 'black',
+                        navigationBarDividerColor: 'white',
+                        enableUrlBarHiding: true,
+                        enableDefaultShare: true,
+                        forceCloseOnRedirection: false,
+                        // Specify full animation resource identifier(package:anim/name)
+                        // or only resource name(in case of animation bundled with app).
+                        animations: {
+                          startEnter: 'slide_in_right',
+                          startExit: 'slide_out_left',
+                          endEnter: 'slide_in_left',
+                          endExit: 'slide_out_right',
+                        },
+                        headers: {
+                          'my-custom-header': 'my custom header value',
+                        },
+                      });
+                    } else Linking.openURL(file);
+                  } catch (error) {
+                    Alert.alert(error.message);
+                  }
+                }}>
+                <Image source={icons.i8} style={styles.hotspotIcon} />
+                <View style={styles.hotspotTitleContainer}>
+                  <Text style={styles.hotspotTitle1}>Youtube Video</Text>
+                </View>
+              </TouchableOpacity>
           </View>
         </ScrollView>
       </View>

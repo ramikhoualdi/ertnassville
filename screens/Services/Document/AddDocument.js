@@ -44,6 +44,7 @@ const AddDocument = ({navigation}) => {
       dispatch(resetFetchDocument());
     }
   }, [addDocumentSuccess]);
+
   const handlePicker = async () => {
     try {
       const file = await DocumentPicker.pick({
@@ -70,7 +71,7 @@ const AddDocument = ({navigation}) => {
     let checked = 'true';
     if (!document) {
       checked = 'false';
-      onChangePdfError('* Pdf Required!');
+      onChangePdfError('* File Required!');
     }
     if (name.length == 0) {
       checked = 'false';
@@ -105,7 +106,7 @@ const AddDocument = ({navigation}) => {
               {!document && (
                 <>
                   <Image style={styles.emptyPhoto} source={icons.file_add} />
-                  <Text style={styles.textType2}>Select A File</Text>
+                  <Text style={styles.textType2}>Select a File</Text>
                 </>
               )}
               {document && documentType === 'text/csv' && (

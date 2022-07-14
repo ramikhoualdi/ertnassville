@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Linking,
+  Alert,
 } from 'react-native';
 import {deleteDescription} from '../../../redux/Property/property.actions';
 import Ioniicons from 'react-native-vector-icons/Ionicons';
@@ -15,18 +17,20 @@ import {auth} from '../../../firebase/utils';
 import Swipeout from 'react-native-swipeout';
 import Dialog from 'react-native-dialog';
 import ImageView from 'react-native-image-viewing';
+import { COLORS, icons } from '../../../constants';
+import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 
 const Description = props => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const [visible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
-  const {nb, photo, title, description, createdAt, updatedAt, deletedAt} =
+  const {nb, file, documentType, title, description, createdAt, updatedAt, deletedAt} =
     props;
   console.log('From Description Model =>');
   console.log(props);
   console.log('From Description Components =>');
-  console.log({photo, title, description});
+  console.log({file,documentType, title, description});
   console.log(auth().currentUser);
 
   var swipeoutBtns = [
@@ -55,14 +59,106 @@ const Description = props => {
       return '';
     }
   };
+
+  const ViewFile = async () => {
+    console.log('Clicked !!');
+    try {
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.open(file, {
+          // iOS Properties
+          dismissButtonStyle: 'cancel',
+          preferredBarTintColor: COLORS.blueBtn,
+          preferredControlTintColor: 'white',
+          readerMode: false,
+          animated: true,
+          modalPresentationStyle: 'fullScreen',
+          modalTransitionStyle: 'coverVertical',
+          modalEnabled: true,
+          enableBarCollapsing: false,
+          // Android Properties
+          showTitle: true,
+          toolbarColor: COLORS.blueBtn,
+          secondaryToolbarColor: 'black',
+          navigationBarColor: 'black',
+          navigationBarDividerColor: 'white',
+          enableUrlBarHiding: true,
+          enableDefaultShare: true,
+          forceCloseOnRedirection: false,
+          // Specify full animation resource identifier(package:anim/name)
+          // or only resource name(in case of animation bundled with app).
+          animations: {
+            startEnter: 'slide_in_right',
+            startExit: 'slide_out_left',
+            endEnter: 'slide_in_left',
+            endExit: 'slide_out_right',
+          },
+          headers: {
+            'my-custom-header': 'my custom header value',
+          },
+        });
+      } else Linking.openURL(file);
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
   const renderModel = () => (
     <View style={styles.contactContainer}>
       <View style={styles.contact}>
         <View style={styles.contactMid}>
           <View style={[styles.contactMidText, styles.shadow]}>
-            <TouchableOpacity onPress={() => setIsVisible(true)}>
-              <Image source={{uri: photo}} style={styles.photoStyle} />
-            </TouchableOpacity>
+            <View>
+              {documentType.startsWith('image/') && (
+                <TouchableOpacity style={styles.iconContainer} onPress={() => setIsVisible(true)}>
+                  <Image source={{uri: file}} style={styles.photoStyle} />
+                </TouchableOpacity>
+              )}
+              {documentType === 'text/csv' && (
+                <TouchableOpacity style={styles.iconContainer} onPress={ViewFile} >
+                  <Image style={styles.emptyPhoto} source={icons.file_csv} />
+                </TouchableOpacity>
+              )}
+              {documentType === 'application/msword' && (
+                <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                  <Image style={styles.emptyPhoto} source={icons.file_doc} />
+                </TouchableOpacity>
+              )}
+              {documentType === 'application/pdf' && (
+                <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                  <Image style={styles.emptyPhoto} source={icons.file_pdf} />
+                </TouchableOpacity>
+              )}
+              {(documentType === 'application/vnd.ms-powerpoint' ||
+                  documentType ===
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation') && (
+                  <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                    <Image style={styles.emptyPhoto} source={icons.file_ppt} />
+                  </TouchableOpacity>
+                )}
+              {documentType === 'text/plain' && (
+                <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                  <Image style={styles.emptyPhoto} source={icons.file_txt} />
+                </TouchableOpacity>
+              )}
+              {documentType === 'application/zip' && (
+                <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                  <Image style={styles.emptyPhoto} source={icons.file_zip} />
+                </TouchableOpacity>
+              )}
+              {documentType !== 'text/csv' && 
+              !documentType.startsWith('image/') &&
+                documentType !== 'application/msword' &&
+                documentType !== 'application/pdf' &&
+                documentType !== 'application/vnd.ms-powerpoint' &&
+                documentType !== 'text/plain' &&
+                documentType !== 'application/zip' &&
+                documentType !==
+                  'application/vnd.openxmlformats-officedocument.presentationml.presentation' && (
+                  <TouchableOpacity style={styles.iconContainer} onPress={ViewFile}>
+                  <Image style={styles.emptyPhoto} source={icons.file_custom} />
+                  </TouchableOpacity>
+                )}
+            </View>
             <TouchableOpacity
               style={styles.readIcon}
               onPress={() => toggleModal()}>
@@ -121,12 +217,14 @@ const Description = props => {
         <Dialog.Button label="Cancel" onPress={handleDeleteCancel} />
         <Dialog.Button label="Delete" onPress={handleDelete} />
       </Dialog.Container>
-      <ImageView
-        images={[{uri: photo}]}
-        imageIndex={0}
-        visible={visible}
-        onRequestClose={() => setIsVisible(false)}
-      />
+      {documentType.startsWith('image/') && (
+        <ImageView
+          images={[{uri: file}]}
+          imageIndex={0}
+          visible={visible}
+          onRequestClose={() => setIsVisible(false)}
+        />
+      )}
     </View>
   );
 };
@@ -236,5 +334,24 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  iconContainer:{
+    backgroundColor: "#dedede",
+    borderRadius: 20,
+
+  },
+  emptyPhoto: {
+    zIndex: 2,
+    width: 330,
+    height: 170,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 3,
+      height: 3,
+    },
+    shadowOpacity: 0.9,
+    shadowRadius: 3,
+    overflow: 'hidden',
+    resizeMode: "contain",
   },
 });

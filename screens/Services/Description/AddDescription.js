@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import IconFeather from 'react-native-vector-icons/Feather';
-import {COLORS, images} from '../../../constants';
+import {COLORS, images, icons} from '../../../constants';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   saveDescription,
@@ -18,6 +18,7 @@ import {
   resetFetchDescription,
 } from '../../../redux/Property/property.actions';
 import { launchImageLibrary } from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 
 const mapState = ({property}) => ({
   addDescriptionSuccess: property.addDescriptionSuccess,
@@ -32,70 +33,50 @@ const AddDescription = ({navigation}) => {
   const dispatch = useDispatch();
 
   // Storing data
-  const [photo, onChangePhoto] = useState('');
+  const [document, setDocument] = useState(null);
+  const [documentType, setDocumentType] = useState('');
+  const [documentName, setDocumentName] = useState('');
   const [title, onChangeTitle] = useState('');
   const [desc, onChangeDesc] = useState('');
   const [photoErrors, onChangePhotoError] = useState('');
   const [titleErrors, onChangeTitleError] = useState('');
   const [descErrors, onChangeDescError] = useState('');
-  const [imgExist, setImgExist] = useState(false);
-
-  // Optional
-  const [fileUri, setFileUri] = useState('');
 
   useEffect(() => {
-    console.log('UseEffect');
-    console.log('File URI =>', fileUri);
-    if (fileUri) {
-      console.log('is Img Exist => ', imgExist);
-      setImgExist(true);
-      console.log('is Img Exist => ', imgExist);
-    }
+    console.log('documentType => ', documentType)
+    console.log('document => ', document)
     if (addDescriptionSuccess) {
       dispatch(ResetAddDescriptionForm());
       navigation.navigate('PropertyHome');
       dispatch(resetFetchDescription());
     }
-  }, [fileUri,addDescriptionSuccess]);
+  }, [documentType,addDescriptionSuccess]);
 
-  const selectImage = () => {
-    var options = {
-      title: 'Select Image',
-      customButtons: [
-        {
-          name: 'customOptionKey',
-          title: 'Choose file from Custom Option',
-        },
-      ],
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-
-    launchImageLibrary(options, res => {
-      console.log('Response = ', res);
-      if (res.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (res.error) {
-        console.log('ImagePicker Error: ', res.error);
-      } else if (res.customButton) {
-        console.log('User tapped custom button: ', res.customButton);
-        alert(res.customButton);
+  const selectImage = async () => {
+    try {
+      const file = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+        copyTo: 'documentDirectory',
+      });
+      setDocument(file[0].fileCopyUri);
+      setDocumentType(file[0].type);
+      setDocumentName(file[0].name);
+    } catch (error) {
+      if (DocumentPicker.isCancel(error)) {
+        console.log('User Cancel Pick Document');
       } else {
-        console.log('response', JSON.stringify(res.assets[0].uri));
-        setFileUri(res.assets[0].uri);
-        onChangePhoto(res.assets[0].uri);
+        throw error;
       }
-    });
+      console.log('Error from catch, ', error);
+    }
   };
 
   const handleRegister = () => {
     console.log('handleRegister Clicked !!');
     let checked = 'true';
-    if (!photo) {
+    if (!document) {
       checked = 'false';
-      onChangePhotoError('* Photo Required!');
+      onChangePhotoError('* File Required!');
     }
     if (title.length == 0) {
       checked = 'false';
@@ -107,8 +88,8 @@ const AddDescription = ({navigation}) => {
     }
     if (checked == 'true') {
       console.log('Inputs Valid !!!!');
-      console.log({photo, title, desc});
-      dispatch(saveDescription(photo, title, desc));
+      console.log({document, documentType, title, desc});
+      dispatch(saveDescription(document, documentType, title, desc));
       console.log('data send to users actions Success !!');
     }
   };
@@ -130,14 +111,74 @@ const AddDescription = ({navigation}) => {
         </View>
         <View>
           <TouchableOpacity onPress={selectImage} style={styles.circle}>
-            <View style={styles.circlePhoto}>
-              {imgExist ? (
-                <Image style={styles.emptyPhoto} source={{uri: fileUri}} />
-              ) : (
-                <Image style={styles.emptyPhoto} source={images.nullimg} />
+          <View style={styles.circlePhoto}>
+              {!document && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_add} />
+                </>
               )}
+              {document && documentType.startsWith('image/') && (
+                <>
+                  <Image style={styles.emptyPhoto2} source={{uri: 'file://'+document}} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document && documentType === 'text/csv' && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_csv} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document && documentType === 'application/msword' && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_doc} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document && documentType === 'application/pdf' && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_pdf} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document &&
+                (documentType === 'application/vnd.ms-powerpoint' ||
+                  documentType ===
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation') && (
+                  <>
+                    <Image style={styles.emptyPhoto} source={icons.file_ppt} />
+                    <Text style={styles.textType2}>{documentName}</Text>
+                  </>
+                )}
+              {document && documentType === 'text/plain' && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_txt} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document && documentType === 'application/zip' && (
+                <>
+                  <Image style={styles.emptyPhoto} source={icons.file_zip} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                </>
+              )}
+              {document &&
+                !documentType.startsWith('image/') &&
+                documentType !== 'text/csv' &&
+                documentType !== 'application/msword' &&
+                documentType !== 'application/pdf' &&
+                documentType !== 'application/vnd.ms-powerpoint' &&
+                documentType !== 'text/plain' &&
+                documentType !== 'application/zip' &&
+                documentType !==
+                  'application/vnd.openxmlformats-officedocument.presentationml.presentation' && (
+                  <>
+                  <Image style={styles.emptyPhoto} source={icons.file_custom} />
+                  <Text style={styles.textType2}>{documentName}</Text>
+                  </>
+                )}
             </View>
-            <Text style={styles.textType2}>Select A Photo</Text>
+            <Text style={styles.textType2}>Select a File</Text>
             <Text style={styles.fieldErrors}>{photoErrors}</Text>
           </TouchableOpacity>
         </View>
@@ -227,6 +268,16 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   emptyPhoto: {
+    width: 300,
+    height: 150,
+    borderRadius: 25,
+    zIndex: 100,
+    transform: [{scale: 1.1}],
+    marginBottom: 15,
+    overflow: 'hidden',
+    resizeMode: "contain",
+  },
+  emptyPhoto2: {
     width: 300,
     height: 150,
     borderRadius: 25,

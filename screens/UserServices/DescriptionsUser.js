@@ -51,13 +51,14 @@ const DescriptionsUser = ({route, navigation}) => {
           </View>
         </View>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.headerTitle}>MSTS</Text>
+          <Text style={styles.headerTitle}>MSDS</Text>
           {fetchDescriptionD && fetchDescriptionD ? (
             fetchDescriptionD.map((m, index) => (
               <Description
                 key={index}
                 nb={m.nb}
-                photo={m.photo}
+                file={m.file}
+                documentType={m.documentType}
                 title={m.title}
                 description={m.description}
                 createdAt={m.createdAt}

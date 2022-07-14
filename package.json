@@ -36,6 +36,7 @@
     "react-native-swipeout": "^2.3.6",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^9.0.0",
+    "react-native-youtube": "^2.0.2",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",
     "redux-logger": "^3.0.6",

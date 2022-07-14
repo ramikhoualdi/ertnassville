@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "828089875774",
-    "project_id": "massay-6b022",
-    "storage_bucket": "massay-6b022.appspot.com"
+    "project_number": "934606357576",
+    "project_id": "ertnashville-af83e",
+    "storage_bucket": "ertnashville-af83e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:828089875774:android:da36fd5d6f07f54b72c06f",
+        "mobilesdk_app_id": "1:934606357576:android:20f295b4f5ae4b9050847d",
         "android_client_info": {
           "package_name": "com.massay"
         }
       },
       "oauth_client": [
         {
-          "client_id": "828089875774-ugb5jbbg2urljdvvg2nfpdr6qau4euav.apps.googleusercontent.com",
+          "client_id": "934606357576-1s4t8apo66khian8e33q3aos82attmsg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBoWqEhz5gCZY47O0GzDGXhWf4HKCHLrpc"
+          "current_key": "AIzaSyCZWeSeSrNz4HuqwnxJRO9DF77h_zcTCGw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "828089875774-ugb5jbbg2urljdvvg2nfpdr6qau4euav.apps.googleusercontent.com",
+              "client_id": "934606357576-1s4t8apo66khian8e33q3aos82attmsg.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

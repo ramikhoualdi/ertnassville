@@ -26,8 +26,8 @@ const EmailLogin = ({navigation}) => {
   const dispatch = useDispatch();
   dispatch(ResetErrorsState)
 
-  const [email, onChangeEmail] = useState('');
-  const [password, onChangepassword] = useState('');
+  const [email, onChangeEmail] = useState('ramykhweldi@gmail.com');
+  const [password, onChangepassword] = useState('hellodude');
   const [emailErrors, setEmailErrors] = useState('');
   const [passwordErrors, setPasswordErrors] = useState('');
   const [isSecure, setIsSecure] = useState(true);
@@ -49,8 +49,8 @@ const EmailLogin = ({navigation}) => {
   }, [propertySignInSuccess]);
 
   const ResetForm = () => {
-    onChangeEmail('');
-    onChangepassword('');
+    // onChangeEmail('');
+    // onChangepassword('');
     setIsSecure(true);
     setIconPasswordName('eye');
     setError([]);

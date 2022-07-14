@@ -125,7 +125,8 @@ useEffect(() => {
               <Description
                 key={index}
                 nb={m.nb}
-                photo={m.photo}
+                file={m.file}
+                documentType={m.documentType}
                 title={m.title}
                 description={m.description}
                 createdAt={m.createdAt}

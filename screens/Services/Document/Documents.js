@@ -133,7 +133,7 @@ const Documents = ({navigation}) => {
           </View>
         </View>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.headerTitle}>Emergency documents</Text>
+          <Text style={styles.headerTitle}>Emergency Parts</Text>
           <View styles={styles.documents}>
             {fetchDocumentD ? (
               fetchDocumentD.map((d, index) => (
@@ -149,7 +149,7 @@ const Documents = ({navigation}) => {
                 />
               ))
             ) : !fetchDocumentD ? (
-              <Text style={styles.loading}>Emergency documents Not Availble Yet.</Text>
+              <Text style={styles.loading}>Emergency Parts Not Availble Yet.</Text>
             ) : (
               <Text style={styles.loading}>loading ...</Text>
             )}

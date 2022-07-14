@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Alert,
+  Linking,
 } from 'react-native';
 import IconFeather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,6 +28,7 @@ import {
   createDrawerNavigator,
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 const mapState = ({property}) => ({
   currentProperty: property.currentProperty,
@@ -190,7 +193,7 @@ const HomePage = ({navigation}) => {
           {/* Fifth */}
           <View style={styles.quickContainer}>
             <Text style={styles.title1}>Latest contact</Text>
-            <View style={styles.hotspotsLine1}>
+            <View style={styles.hotspotsLine2}>
               {fetchContactD && fetchContactD ? (
                 fetchContactD.map((m, index) => (
                   <Contact2
@@ -262,6 +265,47 @@ const CustomDrawerContent = ({navigation}) => {
   const handleUtilities = () => {
     navigation.navigate('_Utilities');
   };
+  const handleYoutubeVideo = async () => {
+    // navigation.navigate('_Youtube');
+    try {
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.open("https://www.youtube.com/watch?v=UwsrzCVZAb8", {
+          // iOS Properties
+          dismissButtonStyle: 'cancel',
+          preferredBarTintColor: COLORS.blueBtn,
+          preferredControlTintColor: 'white',
+          readerMode: false,
+          animated: true,
+          modalPresentationStyle: 'fullScreen',
+          modalTransitionStyle: 'coverVertical',
+          modalEnabled: true,
+          enableBarCollapsing: false,
+          // Android Properties
+          showTitle: true,
+          toolbarColor: COLORS.blueBtn,
+          secondaryToolbarColor: 'black',
+          navigationBarColor: 'black',
+          navigationBarDividerColor: 'white',
+          enableUrlBarHiding: true,
+          enableDefaultShare: true,
+          forceCloseOnRedirection: false,
+          // Specify full animation resource identifier(package:anim/name)
+          // or only resource name(in case of animation bundled with app).
+          animations: {
+            startEnter: 'slide_in_right',
+            startExit: 'slide_out_left',
+            endEnter: 'slide_in_left',
+            endExit: 'slide_out_right',
+          },
+          headers: {
+            'my-custom-header': 'my custom header value',
+          },
+        });
+      } else Linking.openURL(file);
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
   // Drawer => Support
   const handleSupport = () => {
     navigation.navigate('_support');
@@ -317,7 +361,7 @@ const CustomDrawerContent = ({navigation}) => {
             onPress={handleDocuments}
             style={styles.subCategory}>
             <Image source={icons.document} style={styles.drawerIconStyle} />
-            <Text style={styles.subCategoryText}>Emergency documents</Text>
+            <Text style={styles.subCategoryText}>Emergency Parts</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleElevators}
@@ -325,45 +369,51 @@ const CustomDrawerContent = ({navigation}) => {
             <Image source={icons.elevator} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Evacuation plan</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={handleGenerators}
             style={styles.subCategory}>
             <Image source={icons.generator} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Generators</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={handleLockBoxes}
             style={styles.subCategory}>
             <Image source={icons.lockbox} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>LockBoxes</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={handleMatterports}
             style={styles.subCategory}>
             <Image source={icons.matterport} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Matterports</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity onPress={handlePhotos} style={styles.subCategory}>
             <Image source={icons.gallery} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Photos</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={handlePrecautions}
             style={styles.subCategory}>
             <Image source={icons.precaution} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Precautions</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity
             onPress={handlePreExistingDamage}
             style={styles.subCategory}>
             <Image source={icons.damage} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>PreExistingDamage</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity
             onPress={handleUtilities}
             style={styles.subCategory}>
             <Image source={icons.utility} style={styles.drawerIconStyle} />
             <Text style={styles.subCategoryText}>Utilities</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={handleYoutubeVideo}
+            style={styles.subCategory}>
+            <Image source={icons.precaution} style={styles.drawerIconStyle} />
+            <Text style={styles.subCategoryText}>Youtube Video</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -672,6 +722,13 @@ const styles = StyleSheet.create({
   },
   hotspotsLine1: {
     flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 10,
+  },
+  hotspotsLine2: {
+    flex: 1,
+    flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
     paddingVertical: 10,

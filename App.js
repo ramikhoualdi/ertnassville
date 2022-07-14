@@ -41,6 +41,7 @@ import {
   PreExistingDamages,
   AddUtility,
   Utilities,
+  YoutubePreview,
   // Sidebar Chat
   GeneralChat,
   Urgent,
@@ -175,6 +176,7 @@ const App = () => {
             {/* Utilities */}
             <Stack.Screen name="_Utilities" component={Utilities} />
             <Stack.Screen name="AddUtility" component={AddUtility} />
+            <Stack.Screen name="_Youtube" component={YoutubePreview} />
             {/* Chat */}
             {/* GeneralChat */}
             <Stack.Screen name="_generalChat" component={GeneralChat} />

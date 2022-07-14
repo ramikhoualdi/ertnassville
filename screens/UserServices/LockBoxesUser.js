@@ -55,9 +55,13 @@ const LockBoxesUser = ({route, navigation}) => {
               <LockBox
                 key={index}
                 nb={m.nb}
-                emergency={m.emergency}
-                title={m.title}
-                phone={m.phone}
+                ownerName={m.ownerName}
+                ownerContactNumber={m.ownerContactNumber}
+                tenantName={m.tenantName}
+                tenantContactNumber={m.tenantContactNumber}
+                lockboxCode={m.lockboxCode}
+                pets={m.pets}
+                masterKeyCode={m.masterKeyCode}
                 done={m.done}
                 createdAt={m.createdAt}
                 updatedAt={m.updatedAt}

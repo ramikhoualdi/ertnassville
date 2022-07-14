@@ -58,7 +58,7 @@ export default Contact2;
 
 const styles = StyleSheet.create({
   modelMid: {
-    flex: 1,
+    width: "100%",
     flexDirection: 'row',
     alignItems: 'center',
     paddingRight: 15,

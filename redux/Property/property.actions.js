@@ -701,12 +701,13 @@ export const fetchDescription = () => async dispatch => {
     console.log(err);
   }
 };
-export const saveDescription = (photo, title, desc) => async dispatch => {
+export const saveDescription = (document, documentType, title, desc) => async dispatch => {
   let createdAt = new Date();
   let updatedAt = new Date();
   let deletedAt = null;
   const myOb = {
-    photo,
+    document,
+    documentType,
     title,
     desc,
     createdAt,
@@ -714,7 +715,7 @@ export const saveDescription = (photo, title, desc) => async dispatch => {
     deletedAt,
   };
   console.log('myOb >>>>>>>>>>>>>>>>> ', myOb);
-  var photoLink = '';
+  var fileLink = '';
   try {
     console.log('From saveDescription Action');
     const {IDFound, currentID} = await isPropertyIdFound();
@@ -723,13 +724,13 @@ export const saveDescription = (photo, title, desc) => async dispatch => {
     try {
       const url_uuid = uuid.v4();
       const reference = storage().ref(
-        `/${currentID}/descriptions/descriptions_${url_uuid}.png`,
+        `/${currentID}/descriptions/descriptions_${url_uuid}`,
       );
-      await reference.putFile(photo);
+      await reference.putFile(document);
       const url = await storage()
-        .ref(`/${currentID}/descriptions/descriptions_${url_uuid}.png`)
+        .ref(`/${currentID}/descriptions/descriptions_${url_uuid}`)
         .getDownloadURL();
-      photoLink = url;
+        fileLink = url;
     } catch (err) {
       console.log('first try catch saveDescription =>');
       console.log(err);
@@ -739,13 +740,14 @@ export const saveDescription = (photo, title, desc) => async dispatch => {
       const snapshot = await userRef.get();
       let contacts_array = snapshot.data();
       if (contacts_array) {
-        let photo = photoLink;
+        let file = fileLink;
         let description = desc;
         let descriptions = contacts_array.descriptions;
         let nb = descriptions.length;
         descriptions.push({
           nb,
-          photo,
+          file,
+          documentType,
           title,
           description,
           createdAt,
@@ -764,13 +766,14 @@ export const saveDescription = (photo, title, desc) => async dispatch => {
         }
       } else {
         try {
-          let photo = photoLink;
+          let file = fileLink;
           let description = desc;
           await userRef.set({
             descriptions: [
               {
                 nb: 0,
-                photo: photo,
+                file: file,
+                documentType: documentType,
                 title: title,
                 description: description,
                 createdAt: createdAt,
@@ -898,11 +901,11 @@ export const saveDocument = (doc, name, type) => async dispatch => {
       const url_uuid = uuid.v4();
       console.log('url_uuid =>', url_uuid);
       const reference = storage().ref(
-        `/${currentID}/documents/documents_${url_uuid}.pdf`,
+        `/${currentID}/documents/documents_${url_uuid}`,
       );
       await reference.putFile(doc);
       var url = await storage()
-        .ref(`/${currentID}/documents/documents_${url_uuid}.pdf`)
+        .ref(`/${currentID}/documents/documents_${url_uuid}`)
         .getDownloadURL();
       console.log('getDownloadUrl => ', url);
       // Save on firestore
@@ -1456,15 +1459,19 @@ export const fetchLockbox = props => async dispatch => {
     console.log(err);
   }
 };
-export const saveLockbox = (emergency, title, phone) => async dispatch => {
+export const saveLockbox = (ownerName, ownerContactNumber, tenantName, tenantContactNumber, lockboxCode, pets, masterKeyCode) => async dispatch => {
   let createdAt = new Date();
   let updatedAt = new Date();
   let deletedAt = null;
   let done = false;
   const myOb = {
-    emergency,
-    title,
-    phone,
+    ownerName,
+    ownerContactNumber,
+    tenantName,
+    tenantContactNumber,
+    lockboxCode,
+    pets,
+    masterKeyCode,
     done,
     createdAt,
     updatedAt,
@@ -1485,9 +1492,13 @@ export const saveLockbox = (emergency, title, phone) => async dispatch => {
         let nb = lockboxes.length;
         lockboxes.push({
           nb,
-          emergency,
-          title,
-          phone,
+          ownerName,
+          ownerContactNumber,
+          tenantName,
+          tenantContactNumber,
+          lockboxCode,
+          pets,
+          masterKeyCode,
           done,
           createdAt,
           updatedAt,
@@ -1509,9 +1520,13 @@ export const saveLockbox = (emergency, title, phone) => async dispatch => {
             lockboxes: [
               {
                 nb: 0,
-                emergency: emergency,
-                title: title,
-                phone: phone,
+                ownerName: ownerName, 
+                ownerContactNumber: ownerContactNumber,
+                tenantName: tenantName,
+                tenantContactNumber: tenantContactNumber,
+                lockboxCode: lockboxCode,
+                pets: pets,
+                masterKeyCode: masterKeyCode,
                 done: done,
                 createdAt: createdAt,
                 updatedAt: updatedAt,

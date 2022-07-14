@@ -14,12 +14,12 @@ const LockBox = props => {
   const [visibleDone, setVisibleDone] = useState(false);
   const [visibleDelete, setVisibleDelete] = useState(false);
   const dispatch = useDispatch();
-  const {nb, emergency, title, phone, done, createdAt, updatedAt, deletedAt} =
+  const {nb, ownerName, ownerContactNumber, tenantName, tenantContactNumber, lockboxCode, pets, masterKeyCode, done, createdAt, updatedAt, deletedAt} =
     props;
   console.log('props');
   console.log(props);
   console.log('From LockBox Components =>');
-  console.log({emergency, title, phone, done});
+  console.log({ownerName, ownerContactNumber, tenantName, tenantContactNumber, lockboxCode, pets, masterKeyCode, done});
   console.log(auth().currentUser);
 
   var swipeoutBtns = [
@@ -71,21 +71,46 @@ const LockBox = props => {
           )}
           <View style={styles.modelMidText}>
             <View style={styles.titleTime}>
-              <Text style={styles.modelName}>{title}</Text>
-            </View>
-            <Text style={styles.modelNumber}>{phone}</Text>
-            <View style={styles.lastLine}>
-              <View>
-                {emergency === '1' ? (
-                  <Text style={styles.accessEmergency1}>Normal Emergency</Text>
-                ) : null}
-                {emergency === '2' ? (
-                  <Text style={styles.accessEmergency2}>Just Emergency</Text>
-                ) : null}
-                {emergency === '3' ? (
-                  <Text style={styles.accessEmergency3}>Super Emergency</Text>
-                ) : null}
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>Owner:</Text>
+                <Text style={styles.modelName}> {ownerName}</Text>
               </View>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>N°:</Text> 
+                <Text style={styles.modelName}>{ownerContactNumber}</Text>
+              </View>
+            </View>
+            <View style={styles.titleTime}>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>Tenant:</Text>
+                <Text style={styles.modelName}> {tenantName}</Text>
+              </View>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>N°:</Text> 
+                <Text style={styles.modelName}>{tenantContactNumber}</Text>
+              </View>
+            </View>
+            <View style={styles.titleTime}>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>Pets:</Text>
+                <Text style={styles.modelName}> {pets}</Text>
+              </View>
+            </View>
+            <View style={styles.titleTime}>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>Lockbox Code:</Text> 
+                <Text style={styles.modelName}>{lockboxCode}</Text>
+              </View>
+            </View>
+            <View style={styles.titleTime}>
+              <View style={styles.rowStyle} >
+                <Text style={styles.modelNumber}>MasterKeyCode:</Text>
+                <Text style={styles.modelName}> {masterKeyCode}</Text>
+              </View>
+            </View>
+            <View style={styles.lastLine}>
+             <View>
+              </View> 
               <View>
                 <Text style={styles.modelTime}>{time()}</Text>
               </View>
@@ -178,7 +203,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   modelName: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 5,
     color: 'black',
     fontWeight: '700',
@@ -221,4 +246,8 @@ const styles = StyleSheet.create({
   doneCheck: {
     width: 35,
   },
+  rowStyle: {
+    flexDirection: 'row',
+    alignItems: "center",
+  }
 });

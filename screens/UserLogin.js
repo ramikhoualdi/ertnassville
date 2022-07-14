@@ -15,7 +15,7 @@ import {firestore} from '../firebase/utils';
 const UserLogin = ({navigation}) => {
   console.log('User Loign Screen');
 
-  const [email, onChangeEmail] = useState('');
+  const [email, onChangeEmail] = useState('01975184');
   const [pContent, onChangepContent] = useState(null);
   const [done, setDone] = useState(false);
   const [error, setError] = useState(null);
